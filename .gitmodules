@@ -1,0 +1,6 @@
+[submodule "src/f1tenth_system"]
+	path = src/f1tenth_system
+	url = https://github.com/f1tenth/f1tenth_system.git
+[submodule "src/realsense-ros"]
+	path = src/realsense-ros
+	url = https://github.com/IntelRealSense/realsense-ros.git

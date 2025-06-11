@@ -38,7 +38,7 @@ you also will need
 ### Preinstalled Dependencies
 - [librealsense sdk-v2.56.3](https://github.com/IntelRealSense/librealsense/blob/v2.56.3/doc/installation.md)
 
-<!-- # Usage
+# Usage
     ros2 run vicon_control vicon_bridge
 
-    ros2 launch  -->
+    ros2 launch 

@@ -12,15 +12,13 @@ def generate_launch_description():
   launch_args = [
         DeclareLaunchArgument(name="start_cam", default_value="true", description="Start realsense camera"),
         DeclareLaunchArgument(name="start_lidar", default_value="true", description="Start Hokuyo lidar"),
+        DeclareLaunchArgument(name="start_visualization", default_value="false", description="Start rviz visualization"),
   ]
   start_cam = LaunchConfiguration("start_cam")
   start_lidar = LaunchConfiguration("start_lidar")
-  f1tenth_stack_dir = get_package_share_directory('f1tenth_stack')
-
-  no_lidar_bringup_launch_file = os.path.join(f1tenth_stack_dir, 'launch', 'no_lidar_bringup_launch.py')
+  start_visualization = LaunchConfiguration("start_visualization")
 
   params = os.path.join(get_package_share_directory('f1tenth_control'), 'config', 'camera.yaml')
-  _output = 'screen'  # or 'log'
   print("[DEBUG] PARAM PATH:", params)
   realsense_node = Node(
       package='realsense2_camera',
@@ -29,13 +27,12 @@ def generate_launch_description():
       executable='realsense2_camera_node',
       parameters=[os.path.join(
                 get_package_share_directory('f1tenth_control'), 'config', 'camera.yaml')],
-      output=_output,
+      output='screen',
       arguments=['--ros-args', '--log-level', LaunchConfiguration('log_level', default='info')],
       emulate_tty=True,
       condition=IfCondition(start_cam),
  )
 
-# Add the node to the launch description
   # Launch Description
   ld = LaunchDescription(launch_args)
 
@@ -53,5 +50,12 @@ def generate_launch_description():
                 [FindPackageShare("f1tenth_stack"), '/launch', '/no_lidar_bringup_launch.py']
             ),
             condition=UnlessCondition(start_lidar),
+        ))
+  ld.add_action(
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                [FindPackageShare("f1tenth_control"), '/launch', '/visualization_launch.py']
+            ),
+            condition=IfCondition(start_visualization),
         ))
   return ld

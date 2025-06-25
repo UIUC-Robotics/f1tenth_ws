@@ -13,6 +13,7 @@ setup(
         ('share/' + package_name + '/launch', glob('launch/*.py')),
         ('share/' + package_name + '/config', glob('config/*.yaml')),
         ('share/' + package_name + '/rviz', glob('rviz/*.rviz')),
+        ('share/' + package_name + '/waypoints', glob('waypoints/*.rviz')),
 
     ],
     install_requires=['setuptools'],

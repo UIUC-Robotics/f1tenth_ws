@@ -18,7 +18,7 @@ def generate_launch_description():
   start_lidar = LaunchConfiguration("start_lidar")
   start_visualization = LaunchConfiguration("start_visualization")
 
-  params = os.path.join(get_package_share_directory('f1tenth_control'), 'config', 'camera.yaml')
+  params = os.path.join(get_package_share_directory('f1tenth_control'), 'config', 'joy_teleop.yaml')
   print("[DEBUG] PARAM PATH:", params)
   realsense_node = Node(
       package='realsense2_camera',
@@ -31,10 +31,28 @@ def generate_launch_description():
       arguments=['--ros-args', '--log-level', LaunchConfiguration('log_level', default='info')],
       emulate_tty=True,
       condition=IfCondition(start_cam),
- )
+  )
+  vicon_bridge_node = Node(
+      package='f1tenth_control',
+      executable='vicon_bridge',
+      name='vicon_bridge',
+      output='screen',
+      parameters=[],
+      emulate_tty=True,
+  )
+  vicon_tracker_node = Node(
+      package='f1tenth_control',
+      executable='vicon_tracker',
+      name='vicon_tracker',
+      output='screen',
+      emulate_tty=True,
+  )
+
 
   # Launch Description
   ld = LaunchDescription(launch_args)
+  ld.add_action(vicon_bridge_node)
+  ld.add_action(vicon_tracker_node)
 
   ld.add_action(realsense_node)
   ld.add_action(
@@ -42,6 +60,9 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(
                 [FindPackageShare("f1tenth_stack"), '/launch', '/bringup_launch.py']
             ),
+            launch_arguments={
+            'joy_config': params,
+        }.items(),
             condition=IfCondition(start_lidar),
         ))
   ld.add_action(

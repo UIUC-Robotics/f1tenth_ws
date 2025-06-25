@@ -29,13 +29,13 @@ class PurePursuit(Node):
         # Publisher
         self.ctrl_pub = self.create_publisher(
             AckermannDriveStamped,
-            "/vesc/low_level/ackermann_cmd_mux/input/navigation",
+            "/drive",
             1
         )
 
         self.drive_msg = AckermannDriveStamped()
         self.drive_msg.header.frame_id = "f1tenth_control"
-        self.drive_msg.drive.speed = 1.3  # m/s, reference speed
+        self.drive_msg.drive.speed = 0.0  # m/s, reference speed
 
         # Subscriber
         self.vicon_sub = self.create_subscription(
@@ -56,6 +56,8 @@ class PurePursuit(Node):
         self.x = msg.data[0]
         self.y = msg.data[1]
         self.yaw = msg.data[3]
+        self.drive_msg.drive.speed = 1.0  # set constant speed only if you have odometry
+        # print(f"Received state: x={self.x}, y={self.y}, yaw={self.yaw}")
 
     def read_waypoints(self):
         dirname = os.path.dirname(__file__)
@@ -72,7 +74,6 @@ class PurePursuit(Node):
 
     def get_f1tenth_state(self):
         curr_yaw = math.radians(self.yaw)
-
         curr_x = self.x - self.offset * math.cos(curr_yaw)
         curr_y = self.y - self.offset * math.sin(curr_yaw)
 
@@ -98,8 +99,8 @@ class PurePursuit(Node):
 
         # Find candidate points within lookahead range ± 0.05 m
         goal_arr = np.where(
-            (self.dist_arr < self.look_ahead + 0.05) &
-            (self.dist_arr > self.look_ahead - 0.05)
+            (self.dist_arr < self.look_ahead + 0.15) &
+            (self.dist_arr > self.look_ahead - 0.15)
         )[0]
 
         # Find goal point ahead of the vehicle
@@ -115,7 +116,7 @@ class PurePursuit(Node):
         alpha = math.radians(self.path_points_yaw_record[self.goal]) - curr_yaw
 
         # Pure Pursuit control law tuning parameters
-        k = 0.2
+        k = 0.4
         angle_i = math.atan((k * 2 * self.wheelbase * math.sin(alpha)) / L)
         angle = angle_i * 2
 
@@ -131,6 +132,7 @@ class PurePursuit(Node):
         self.drive_msg.drive.steering_angle = f_delta
 
         self.ctrl_pub.publish(self.drive_msg)
+        # print("From timer_callback: Published drive message with steering angle:", f_delta_deg)
 
 
 def main(args=None):

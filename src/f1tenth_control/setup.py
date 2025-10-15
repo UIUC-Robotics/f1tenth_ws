@@ -1,5 +1,6 @@
 from setuptools import find_packages, setup
 from glob import glob
+
 package_name = 'f1tenth_control'
 
 setup(
@@ -14,7 +15,6 @@ setup(
         ('share/' + package_name + '/config', glob('config/*.yaml')),
         ('share/' + package_name + '/rviz', glob('rviz/*.rviz')),
         ('share/' + package_name + '/waypoints', glob('waypoints/*.rviz')),
-
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -22,11 +22,9 @@ setup(
     maintainer_email='skn@todo.todo',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'vicon_bridge = f1tenth_control.vicon_bridge_node:main',
-            'vicon_tracker = f1tenth_control.vicon_tracker_pp_node:main',
+            'pure_pursuit_control = f1tenth_control.pure_pursuit_control:main',
         ],
     },
 )

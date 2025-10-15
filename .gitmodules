@@ -7,3 +7,6 @@
 [submodule "src/motion_capture_tracking"]
 	path = src/motion_capture_tracking
 	url = https://github.com/UIUC-Robotics/motion_capture_tracking.git
+[submodule "src/f1tenth_simulator"]
+	path = src/f1tenth_simulator
+	url = https://github.com/UIUC-Robotics/f1tenth_simulator.git

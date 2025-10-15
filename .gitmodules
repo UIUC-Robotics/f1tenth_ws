@@ -4,3 +4,6 @@
 [submodule "src/realsense-ros"]
 	path = src/realsense-ros
 	url = https://github.com/IntelRealSense/realsense-ros.git
+[submodule "src/motion_capture_tracking"]
+	path = src/motion_capture_tracking
+	url = https://github.com/UIUC-Robotics/motion_capture_tracking.git

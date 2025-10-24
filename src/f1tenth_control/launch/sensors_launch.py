@@ -18,6 +18,12 @@ def generate_launch_description():
   start_lidar = LaunchConfiguration("start_lidar")
   start_visualization = LaunchConfiguration("start_visualization")
 
+  sensors_config = os.path.join(
+        get_package_share_directory('f1tenth_control'),
+        'config',
+        'sensors.yaml'
+    )
+
   params = os.path.join(get_package_share_directory('f1tenth_control'), 'config', 'joy_teleop.yaml')
   print("[DEBUG] PARAM PATH:", params)
   realsense_node = Node(
@@ -47,29 +53,21 @@ def generate_launch_description():
       output='screen',
       emulate_tty=True,
   )
+  urg_node = Node(
+      package='urg_node',
+      executable='urg_node_driver',
+      name='urg_node',
+      parameters=[sensors_config],
+      output='screen',
+      condition=IfCondition(start_lidar),
+  )
 
 
   # Launch Description
   ld = LaunchDescription(launch_args)
 
   ld.add_action(realsense_node)
-  ld.add_action(
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                [FindPackageShare("f1tenth_stack"), '/launch', '/bringup_launch.py']
-            ),
-            launch_arguments={
-            'joy_config': params,
-        }.items(),
-            condition=IfCondition(start_lidar),
-        ))
-  ld.add_action(
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                [FindPackageShare("f1tenth_stack"), '/launch', '/no_lidar_bringup_launch.py']
-            ),
-            condition=UnlessCondition(start_lidar),
-        ))
+  ld.add_action(urg_node)
   ld.add_action(
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
@@ -78,4 +76,5 @@ def generate_launch_description():
             condition=IfCondition(start_visualization),
         ))
   return ld
+
 

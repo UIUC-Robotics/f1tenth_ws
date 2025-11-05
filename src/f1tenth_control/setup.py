@@ -14,7 +14,7 @@ setup(
         ('share/' + package_name + '/launch', glob('launch/*.py')),
         ('share/' + package_name + '/config', glob('config/*.yaml')),
         ('share/' + package_name + '/rviz', glob('rviz/*.rviz')),
-        ('share/' + package_name + '/waypoints', glob('waypoints/*.rviz')),
+        ('share/' + package_name + '/waypoints', glob('waypoints/*.csv')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'pure_pursuit_control = f1tenth_control.pure_pursuit_control:main',
+            'waypoint_recorder = f1tenth_control.waypoint_recorder:main',
         ],
     },
 )

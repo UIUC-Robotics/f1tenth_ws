@@ -1,2 +1,3 @@
 pymavlink
 numpy<2
+matplotlib
